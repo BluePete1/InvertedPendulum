@@ -36,10 +36,12 @@ Bi = [Dd ; Bd ];
 
 %% LQR with integral action
 % [x y z vx vy vz phi theta psi wx wy wz]
-Q = diag([1 1 3 21 21 1681 6 6 56 110 110 560 16 16 16]); R = 3*diag([1 1 1 1]);
+% Q = diag([1 1 3 21 21 1681 6 6 56 110 110 560 16 16 16]); R = 3*diag([1 1 1 1]);
+Q = diag([0.7 0.7 0.7 180 180 250 38 38 400 900 900 1400 560 560 700]); 
+R = 3e-5*diag([1 1 1 1]);
 [K,S,P] = dlqr(Ai,Bi,Q,R,0);
 
-Ki = K(:,1:p);
-Ks = K(:,p+1:end);
+Ki = K(:,1:3);
+Ks = K(:,3+1:end);
   
 

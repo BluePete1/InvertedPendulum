@@ -35,7 +35,8 @@ sysd = c2d(lin_sys, Ts,'zoh');
 
 %% LQR
 % [x y z vx vy vz phi theta psi wx wy wz]
-Q = diag([21 21 681 6 6 256 110 110 560 16 16 16]); R = 3*diag([1 1 1 1]);
+% Q = diag([21 21 681 6 6 256 110 110 560 16 16 16]); R = 3*diag([1 1 1 1]);
+Q = diag([80 80 250 38 38 400 500 500 1400 360 360 700]); R = 1.2e-1*diag([1 1 1 1]);
 [K,S,P] = dlqr(Ad,Bd,Q,R,0);
 
 
