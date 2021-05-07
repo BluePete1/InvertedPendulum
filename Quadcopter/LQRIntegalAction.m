@@ -18,12 +18,9 @@ B(10,1) = pq.L*pq.k*pq.cm/pq.Ixx; B(10,3) = -pq.L*pq.k*pq.cm/pq.Ixx;
 B(11,2) = pq.L*pq.k*pq.cm/pq.Iyy; B(11,4) = -pq.L*pq.k*pq.cm/pq.Iyy;
 B(12,1) = pq.b*pq.cm/pq.Izz; B(12,2) = -pq.b*pq.cm/pq.Izz; B(12,3) = pq.b*pq.cm/pq.Izz; B(12,4) = -pq.b*pq.cm/pq.Izz;
 
-% C = zeros(p,n);
-% C(1,1) = 1; C(2,2) = 1; C(3,3) = 1;
-% C(4,7) = 1; C(5,8) = 1; C(6,9) = 1;
-C = eye(p,n);
+C = eye(3,12);
 
-D = zeros(p,m);
+D = zeros(3,m);
 
 lin_sys = ss(A,B,C,D);
 
@@ -33,20 +30,16 @@ Ts = 0.05;
 sysd = c2d(lin_sys, Ts,'zoh');
 [Ad, Bd, Cd, Dd] = ssdata(sysd);
 
-%% LQR
+%% Integral Action
+Ai = [eye(3) C; zeros(n,3) Ad];
+Bi = [Dd ; Bd ];
+
+%% LQR with integral action
 % [x y z vx vy vz phi theta psi wx wy wz]
-Q = diag([21 21 681 6 6 256 110 110 560 16 16 16]); R = 3*diag([1 1 1 1]);
-[K,S,P] = dlqr(Ad,Bd,Q,R,0);
+Q = diag([1 1 3 21 21 1681 6 6 56 110 110 560 16 16 16]); R = 3*diag([1 1 1 1]);
+[K,S,P] = dlqr(Ai,Bi,Q,R,0);
 
+Ki = K(:,1:p);
+Ks = K(:,p+1:end);
+  
 
-%% Full state feedback controller
-big_A = [Ad-eye(size(Ad)) Bd
-         Cd Dd];
-
-big_Y =[ zeros(n,p)
-         eye(p,p) ];
-
-big_N = (big_A)\big_Y;
-
-Nx = big_N(1:n,:);
-Nu = big_N (n+1:end,:);
