@@ -12,17 +12,17 @@ A(4,4) = -pq.kd/pq.m; A(5,5) = -pq.kd/pq.m; A(6,6) = -pq.kd/pq.m;
 A(5,7) = -pq.g; A(4,8) = pq.g;
 A(7,10) = 1; A(8,11) = 1; A(9,12) = 1;
 
-B = zeros(12,4);
+B = zeros(n,m);
 B(6,1) = pq.k*pq.cm/pq.m; B(6,2) = pq.k*pq.cm/pq.m; B(6,3) = pq.k*pq.cm/pq.m; B(6,4) = pq.k*pq.cm/pq.m;
 B(10,1) = pq.L*pq.k*pq.cm/pq.Ixx; B(10,3) = -pq.L*pq.k*pq.cm/pq.Ixx;
 B(11,2) = pq.L*pq.k*pq.cm/pq.Iyy; B(11,4) = -pq.L*pq.k*pq.cm/pq.Iyy;
 B(12,1) = pq.b*pq.cm/pq.Izz; B(12,2) = -pq.b*pq.cm/pq.Izz; B(12,3) = pq.b*pq.cm/pq.Izz; B(12,4) = -pq.b*pq.cm/pq.Izz;
 
-C = zeros(6,12);
+C = zeros(p,n);
 C(1,1) = 1; C(2,2) = 1; C(3,3) = 1;
 C(4,7) = 1; C(5,8) = 1; C(6,9) = 1;
 
-D = zeros(6,4);
+D = zeros(p,m);
 
 lin_sys = ss(A,B,C,D);
 

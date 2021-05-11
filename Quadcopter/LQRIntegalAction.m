@@ -5,7 +5,7 @@ load('references_09.mat')
 pq = parameters;
 n = 12;%number of states 
 m = 4; %number of inputs
-p = 12; %number of outputs
+p = 3; %number of outputs
 A = zeros(n,n);
 A(1,4) = 1;A(2,5) = 1;A(3,6) = 1;
 A(4,4) = -pq.kd/pq.m; A(5,5) = -pq.kd/pq.m; A(6,6) = -pq.kd/pq.m;
@@ -18,9 +18,9 @@ B(10,1) = pq.L*pq.k*pq.cm/pq.Ixx; B(10,3) = -pq.L*pq.k*pq.cm/pq.Ixx;
 B(11,2) = pq.L*pq.k*pq.cm/pq.Iyy; B(11,4) = -pq.L*pq.k*pq.cm/pq.Iyy;
 B(12,1) = pq.b*pq.cm/pq.Izz; B(12,2) = -pq.b*pq.cm/pq.Izz; B(12,3) = pq.b*pq.cm/pq.Izz; B(12,4) = -pq.b*pq.cm/pq.Izz;
 
-C = eye(3,12);
+C = eye(p,n);
 
-D = zeros(3,m);
+D = zeros(p,m);
 
 lin_sys = ss(A,B,C,D);
 
@@ -31,7 +31,7 @@ sysd = c2d(lin_sys, Ts,'zoh');
 [Ad, Bd, Cd, Dd] = ssdata(sysd);
 
 %% Integral Action
-Ai = [eye(3) C; zeros(n,3) Ad];
+Ai = [eye(p) Cd; zeros(n,p) Ad];
 Bi = [Dd ; Bd ];
 
 %% LQR with integral action
