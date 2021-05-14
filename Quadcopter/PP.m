@@ -33,13 +33,6 @@ Ts = 0.05;
 sysd = c2d(lin_sys, Ts,'zoh');
 [Ad, Bd, Cd, Dd] = ssdata(sysd);
 
-%% LQR
-% [x y z vx vy vz phi theta psi wx wy wz]
-% Q = diag([21 21 681 6 6 256 110 110 560 16 16 16]); R = 3*diag([1 1 1 1]);
-Q = diag([80 80 250 38 38 400 500 500 1400 360 360 700]); R = 1.2e-1*diag([1 1 1 1]);
-[K,S,P] = dlqr(Ad,Bd,Q,R,0);
-
-
 %% Full state feedback controller
 big_A = [Ad-eye(size(Ad)) Bd
          eye(12,12) zeros(12,m)];
@@ -54,15 +47,11 @@ Nu = big_N (n+1:end,:);
 
 %% Pole placement Contoller
 
-% P = eig(A);
-% 
-% P = [-0.5,-0.5,-0.5,-10+3i,-10-3i,-137,-137,-524,-1e4,-1e4,-1e4,-1e4];
-% 
-% K = place(Ad,Bd,P);
+P = [0.94 0.94 0.94 0.67 0.67 0.67 0.92 0.92 0.92 0.82 0.82 0.82];
+
+K = place(Ad,Bd,P);
 %% Pole placement Estimator
 
-Pe = [0.99 0.99 0.9753 0.9753 0.85 0.85 0.65 0.65 0.65 0.6 0.6 0.6];
-
-L = place(Ad',Cd',Pe)'*10^0;
+L = place(Ad',Cd',P)';
 Dpp = zeros(12,10);
 
