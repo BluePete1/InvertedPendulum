@@ -39,6 +39,6 @@ Q = diag([7 40 1 10]); R = 0.003;
 % grid
 % 
 % %% Method1
-% N = [A B; C D]\[zeros(4); ones(4)];
+% N = [A-eye(4) B; C D]\[zeros(4); eye(4)];
 % Nx = N(1:4,:);Nu = N(5,:);
-% 
+
