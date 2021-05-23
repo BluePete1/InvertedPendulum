@@ -47,27 +47,33 @@ Nu = big_N (n+1:end,:);
 
 %% Pole placement Contoller
 
-% P = [0.94 0.94 0.94 0.67 0.67 0.67 0.92 0.92 0.92 0.82 0.82 0.82];
-% P = [0.93 0.93 0.93 0.1 0.1 0.1 0.94 0.94 0.94 0.3 0.3 0.3];
-% 
-% K = place(Ad,Bd,P);
-
 %settling time: 5s
-%Overshoot: 5%
-P1 = blkdiag([-0.9200 +0.96479423973148967042429785829926; -0.96479423973148967042429785829926 -0.9200],-5.3,-5.3,-5.3,-5.31,-5.31,-5.31,-5.32,-5.32,-5.32,-5.34);
+%Overshoot: 0.00001%
 
-for i=1:12
-P1(i,i) = exp(P1(i,i)*Ts);
+syms c;
+ts=5;
+alpha = 4.6/ts;
+s = vpasolve(exp(-pi*c/sqrt(1-c^2))==0.0000001 ,c);
+c = double(s);
+wn = alpha/c;
+beta = wn*sqrt(1-c^2);
+
+P1 = blkdiag([-alpha +beta; -beta -alpha],-4.3,-4.3,-4.3,-4.31,-4.31,-4.31,-4.32,-4.32,-4.32,-4.34);
+for i=3:12
+     P1(i,i) = exp((5+(0.001*i))*P1(1,1)*Ts);
 end
-K =  place(Ad,Bd,diag(P1));
+Pc = exp((P1(1,1)+P1(1,2)*1i)*Ts);
+P1(1,1) = real(Pc); P1(2,1) = -imag(Pc); P1(2,2) =real(Pc); P1(1,2) = imag(Pc);
+
+mySeed = 10;
+rng(mySeed);
+G = randn(m,n);
+X1 = lyap(Ad,-P1,-Bd*G);
+K = G/X1;
 
 %% Pole placement Estimator
-% 
-%settling time: 0.5s
-%Overshoot: 1%
-P2 = blkdiag([- 9.2000 +6.2761312276724701984346046769842; -6.2761312276724701984346046769842 -9.2000],-50.3,-50.3,-50.3,-50.31,-50.31,-50.31,-50.32,-50.32,-50.32,-50.34);
-for i=1:12
-P2(i,i) = exp(P2(i,i)*Ts);
-end
-L = place(Ad',Cd',diag(P2))';
+
+G = randn(p,n);
+X1 = lyap(Ad',-0.7*P1,-Cd'*G);
+L = (G/X1)';
 
